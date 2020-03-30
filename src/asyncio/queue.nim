@@ -1,55 +1,55 @@
 type
-  CircularQueue*[N: static[int], T] = object
-    data: array[N, T]
+  CircularQueue*[Capacity: static[int], T] = object
+    data: array[Capacity, T]
     head, tail: int
 
-proc newCircularQueue*[N: static[int], T](): CircularQueue[N, T] =
+proc initCircularQueue*[Capacity: static[int], T](): CircularQueue[Capacity, T] =
   discard
 
 func isFull*(q: CircularQueue): bool {.inline.} =
-  abs(q.tail-q.head) == q.N
+  abs(q.tail-q.head) == q.Capacity
 
 func isEmpty*(q: CircularQueue): bool {.inline.} =
   q.tail == q.head
 
-proc deQueue*[N: static[int], T](q: var CircularQueue[N, T]): owned T =
+proc deQueue*[Capacity: static[int], T](q: var CircularQueue[Capacity, T]): owned T =
   if q.isEmpty:
     return
-  if q.head < q.N:
+  if q.head < q.Capacity:
     result = move q.data[q.head]
   else:
-    result = move q.data[q.head-q.N]
+    result = move q.data[q.head-q.Capacity]
   inc(q.head)
-  if q.head == 2 * q.N:
+  if q.head == 2 * q.Capacity:
     q.head = 0
 
-proc peekQueue*[N: static[int], T](q: CircularQueue[N, T]): lent T =
+proc peekQueue*[Capacity: static[int], T](q: CircularQueue[Capacity, T]): lent T =
   if q.isEmpty:
     return
-  if q.head < q.N:
+  if q.head < q.Capacity:
     result = q.data[q.head]
   else:
-    result = q.data[q.head-q.N]
+    result = q.data[q.head-q.Capacity]
 
-proc enQueue*[N: static[int], T](q: var CircularQueue[N, T], v: sink T) =
+proc enQueue*[Capacity: static[int], T](q: var CircularQueue[Capacity, T], v: sink T) =
   if q.isFull:
     return
-  if q.tail < q.N:
+  if q.tail < q.Capacity:
     q.data[q.tail] = v
   else:
-    q.data[q.tail-q.N] = v
+    q.data[q.tail-q.Capacity] = v
   inc(q.tail)
-  if q.tail == 2 * q.N:
+  if q.tail == 2 * q.Capacity:
     q.tail = 0
 
 func len*(q: CircularQueue): int {.inline.} =
   result = q.tail - q.head
   while result < 0:
-    result.inc(q.N)
+    result.inc(q.Capacity)
 
 
 when isMainModule:
-  var c = newCircularQueue[10, int]()
+  var c = initCircularQueue[10, int]()
   for i in 1 .. 10:
     c.enQueue(i)
   for i in 1 .. 10:
