@@ -9,7 +9,7 @@ type
     data: array[Capacity, T]
     head, tail: int
 
-  AsyncCircularQueue*[Capacity: static[int], T] = ref object of CircularQueue
+  AsyncCircularQueue*[Capacity: static[int], T] = ref object of CircularQueue[Capacity, T]
     getter: Deque[Future[void]]
     putter: Deque[Future[void]]
 
